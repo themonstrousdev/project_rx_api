@@ -606,7 +606,6 @@ class APIController extends Controller
       $result['sub_account']['merchant'] = app('Increment\Imarket\Merchant\Http\MerchantController')->getByParams('account_id', $admin);
     }
     return $result;
-    return $result;
   }
 
 }
