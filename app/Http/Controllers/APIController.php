@@ -402,7 +402,6 @@ class APIController extends Controller
       if(isset($request['with_soft_delete'])){
         $this->model = $this->model->withTrashed();
       }
-
       for($x = 0; $x < count($tableColumns); $x++){
         $tableColumns[$x] = $tableName.'.'.$tableColumns[$x];
       }
