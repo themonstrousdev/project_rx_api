@@ -176,6 +176,10 @@ return [
 
 
         Increment\Imarket\Bundled\BundledServiceProvider::class,
+        //Ratings Provider
+        Increment\Common\Rating\RatingServiceProvider::class,
+        //Finance Provider
+        Increment\Finance\FinanceProvider::class,
         // Increment\Imarket\Coupon\CouponServiceProvider::class,
         Increment\Imarket\Cart\CartServiceProvider::class,
         Increment\Imarket\Merchant\MerchantServiceProvider::class,

@@ -87,6 +87,7 @@ return array(
     'Increment\\Imarket\\Coupon\\' => array($baseDir . '/packages/increment/imarket/coupon/src'),
     'Increment\\Imarket\\Cart\\' => array($baseDir . '/packages/increment/imarket/cart/src'),
     'Increment\\Imarket\\Bundled\\' => array($baseDir . '/packages/increment/imarket/bundled/src'),
+    'Increment\\Finance\\' => array($baseDir . '/packages/increment/finance/src'),
     'Increment\\Common\\Tutorial\\' => array($baseDir . '/packages/increment/common/tutorial/src'),
     'Increment\\Common\\System\\' => array($baseDir . '/packages/increment/common/system/src'),
     'Increment\\Common\\Rating\\' => array($baseDir . '/packages/increment/common/rating/src'),

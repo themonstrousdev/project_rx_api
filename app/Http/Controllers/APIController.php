@@ -177,6 +177,7 @@ class APIController extends Controller
     if($this->checkAuthenticatedUser() == false){
       return $this->response();
     }
+
     $this->retrieveDB($request->all());
     return $this->response();
   }
