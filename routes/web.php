@@ -76,6 +76,7 @@ Route::post($route, 'AuthenticateController@authenticate');
 Route::post($route.'/user', 'AuthenticateController@getAuthenticatedUser');
 Route::post($route.'/refresh', 'AuthenticateController@refreshToken');
 Route::post($route.'/invalidate', 'AuthenticateController@deauthenticate');
+Route::post($route.'/googlelogin', 'AuthenticateController@googleLogin');
 Route::post($route.'/auth', function () {
     return true;
 });
@@ -103,3 +104,13 @@ Route::post($route.'block_account', $controller."blockedAccount");
 Route::post($route.'update', $controller."update");
 Route::post($route.'delete', $controller."delete");
 Route::get($route.'test', $controller.'test');
+
+$route = env('PACKAGE_ROUTE', '').'/dashboard/';
+$controller = 'ProductController@';
+Route::post($route.'category', $controller."retrieveByCategory");
+Route::post($route.'featured', $controller."retrieveByFeatured");
+Route::post($route.'shops', $controller."retrieveByShop");
+// //Status Change for Package
+// $route = env('PACKAGE_ROUTE', '').'/checkouts/';
+// $controller = 'CheckoutController@';
+// Route::post($route.'updateStatus', $controller."updateStatus");
