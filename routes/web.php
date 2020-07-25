@@ -114,3 +114,10 @@ Route::post($route.'shops', $controller."retrieveByShop");
 // $route = env('PACKAGE_ROUTE', '').'/checkouts/';
 // $controller = 'CheckoutController@';
 // Route::post($route.'updateStatus', $controller."updateStatus");
+
+
+// Google Place
+$route = env('PACKAGE_ROUTE', '').'/google_places/';
+$controller = 'GooglePlaceController@';
+Route::post($route.'search', $controller."search");
+
