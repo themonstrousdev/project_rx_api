@@ -31,7 +31,8 @@
     "autoload": {
         "classmap": [
             "database/seeds",
-            "database/factories"
+            "database/factories",
+            "vendor/google/apiclient/src/Google"
         ],
         "psr-4": {
             "App\\": "app/",
@@ -53,7 +54,9 @@
             "Increment\\Imarket\\Shipping\\": "packages/increment/imarket/shipping/src/",
             "Increment\\Imarket\\Wishlist\\": "packages/increment/imarket/wishlist/src/",
             "Increment\\Imarket\\Installment\\": "packages/increment/imarket/installment/src/",
-            "Increment\\Imarket\\Rental\\": "packages/increment/imarket/rental/src/"
+            "Increment\\Imarket\\Rental\\": "packages/increment/imarket/rental/src/",
+            "Increment\\Imarket\\Delivery\\": "packages/increment/imarket/delivery/src/",
+            "Increment\\Finance\\": "packages/increment/finance/src/"
         }
     },
     "autoload-dev": {

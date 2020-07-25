@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuthExceptions\JWTException;
 use Illuminate\Support\Facades\Validator;
-
 use App\UserAuth;
 use Increment\Account\Models\Account;
 use App\LoginLogger;
@@ -38,7 +36,6 @@ class AuthenticateController extends Controller
   }
   public function authenticate(Request $request)
   {
-      
     $data = $request->all();
     $text = array('email' => $data['username']);
 
@@ -117,5 +114,24 @@ class AuthenticateController extends Controller
     }
     else
       return true;
+  }
+
+
+  public function test(){
+    return "Here";
+  }
+
+  public function googleLogin(){
+    $CLIENT_ID = "110121744042-m2q8b6gjnor8q8njmu1dkgtsieek9as2.apps.googleusercontent.com";
+    $client = new Google_Client(['client_id' => $CLIENT_ID]);  // Specify the CLIENT_ID of the app that accesses the backend
+    $payload = $client->verifyIdToken($id_token);
+    return $payload;
+    if ($payload) {
+      $userid = $payload['sub'];
+      // If request specified a G Suite domain:
+      //$domain = $payload['hd'];
+    } else {
+      // Invalid ID token
+    }
   }
 }
