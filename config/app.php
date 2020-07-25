@@ -173,8 +173,6 @@ return [
         Increment\Common\Invitation\InvitationServiceProvider::class,
         Increment\Common\System\SystemNotificationServiceProvider::class,
         Increment\Common\Image\ImageServiceProvider::class,
-
-
         Increment\Imarket\Bundled\BundledServiceProvider::class,
         //Ratings Provider
         Increment\Common\Rating\RatingServiceProvider::class,

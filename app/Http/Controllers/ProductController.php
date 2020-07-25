@@ -24,6 +24,27 @@ class ProductController extends APIController
         "timezone" => 'Asia/Manila'
     );
     
+    public static function LongLatDistance(
+        $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
+      {
+        $latitudeFrom = floatval($latitudeFrom);
+        $longitudeFrom = floatval($longitudeFrom);
+        $latitudeTo = floatval($latitudeTo);
+        $longitudeTo = floatval($longitudeTo);
+        // convert from degrees to radians
+        $latFrom = deg2rad($latitudeFrom);
+        $lonFrom = deg2rad($longitudeFrom);
+        $latTo = deg2rad($latitudeTo);
+        $lonTo = deg2rad($longitudeTo);
+        $lonDelta = $lonTo - $lonFrom;
+        $a = pow(cos($latTo) * sin($lonDelta), 2) +
+          pow(cos($latFrom) * sin($latTo) - sin($latFrom) * cos($latTo) * cos($lonDelta), 2);
+        $b = sin($latFrom) * sin($latTo) + cos($latFrom) * cos($latTo) * cos($lonDelta);
+      
+        $angle = atan2(sqrt($a), $b);
+        return $angle * $earthRadius;
+      }
+
     public function retrieveByCategory(Request $request){
         //Data to be passed: category, limit
         $dashboardarr = [];
@@ -35,8 +56,11 @@ class ProductController extends APIController
                 ->distinct("products.merchant_id")
                 ->where($condition['column'],$condition['value'])
                 ->limit($request['limit'])->get();
-            $result[0]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[0]["account_id"]);
-            $result[0]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[0]["id"], "featured");
+            for($i=0; $i<count($result); $i++){
+                $result[$i]["distance"] = $this->LongLatDistance("10.337182","123.893764","10.35280682","123.91337013");
+                $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
+                $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
+            }
             array_push($dashboardarr, $result);
         }
         $dashboard["request_timestamp"]= date("Y-m-d h:i:s");
@@ -54,8 +78,11 @@ class ProductController extends APIController
             ->leftJoin('locations', 'products.account_id',"=","locations.account_id")
             ->where("status","featured")
             ->limit($modifiedrequest['limit'])->get();
-        $result[0]["rating"] =app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[0]["account_id"]);
-        $result[0]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[0]["id"], "featured");
+        for($i=0; $i<count($result); $i++){
+            $result[$i]["distance"] = $this->LongLatDistance("10.337182","123.893764","10.35280682","123.91337013");
+            $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
+            $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
+        }
         array_push($dashboardarr, $result);
         $dashboard["request_timestamp"]= date("Y-m-d h:i:s");
         $dashboard["data"] = $dashboardarr;
@@ -73,8 +100,11 @@ class ProductController extends APIController
             $result = Merchant::select()
                 ->where("merchants.code",$request['id'])
                 ->leftJoin('locations','merchants.account_id',"=", "locations.account_id")->get();
-            $result[0]["rating"] =app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[0]["account_id"]);
-            $result[0]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[0]["id"], "featured"); 
+            for($i=0; $i<count($result); $i++){
+                $result[$i]["distance"] = $this->LongLatDistance("10.337182","123.893764","10.35280682","123.91337013");
+                $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
+                $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
+            }
             array_push($dashboardarr, $result);
         }else{
             //"merchants.code","merchants.account_id","locations.latitude","locations.longitude","locations.route","locations.locality"
@@ -84,8 +114,11 @@ class ProductController extends APIController
                 ->limit($request['limit'])
                 ->offset($request['offset'])
                 ->orderBy($request['sort'], 'desc')->get();
-            $result[0]["rating"] =app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[0]["account_id"]);
-            $result[0]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[0]["id"], "featured");
+            for($i=0; $i<count($result); $i++){
+                $result[$i]["distance"] = $this->LongLatDistance("10.337182","123.893764","10.35280682","123.91337013");
+                $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
+                $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
+            }
             //$result = Product::select('account_id','merchant_id','category')->where($condition['column'],$condition['value'])->limit($request['limit'])->offset($request['offset'])->orderBy($request['sort'], 'desc')->get();
             //$result[0]["location"] = Location::select('latitude', 'longitude', 'route')->where("account_id", $result[0]["account_id"])->get();
             array_push($dashboardarr, $result);
@@ -96,3 +129,4 @@ class ProductController extends APIController
     }
 
 }
+    
