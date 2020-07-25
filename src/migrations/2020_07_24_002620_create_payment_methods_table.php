@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLedgersTable extends Migration
+class CreatePaymentMethodsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateLedgersTable extends Migration
      */
     public function up()
     {
-        Schema::create('ledgers', function (Blueprint $table) {
+        Schema::create('payment_methods', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('code');
             $table->bigInteger('account_id');
-            $table->double('amount');
-            $table->string('description');
-            $table->string('currency');
+            $table->string('account_code');
+            $table->string('payload');
+            $table->string('payload_value');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateLedgersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ledgers');
+        Schema::dropIfExists('payment_methods');
     }
 }
