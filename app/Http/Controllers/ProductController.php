@@ -51,13 +51,13 @@ class ProductController extends APIController
         $conditions = $request['condition'];
         foreach ($conditions as $condition){
             //manual query without raw query;
-            $result = Product::select('products.id','products.account_id','products.merchant_id','products.status','products.category', 'locations.latitude', 'locations.longitude', 'locations.route')
+            $result = Product::select('products.id','products.account_id','products.merchant_id','products.title', 'products.description','products.status','products.category', 'locations.latitude', 'locations.longitude', 'locations.route')
                 ->leftJoin('locations', 'products.account_id',"=","locations.account_id")
                 ->distinct("products.merchant_id")
                 ->where($condition['column'],$condition['value'])
                 ->limit($request['limit'])->get();
             for($i=0; $i<count($result); $i++){
-                $result[$i]["distance"] = $this->LongLatDistance("10.337182","123.893764","10.35280682","123.91337013");
+                $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$request[$i]["latitude"], $request[$i]["longitude"]);
                 $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
                 $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
             }
@@ -74,12 +74,12 @@ class ProductController extends APIController
         $modifiedrequest = new Request([]);
         $modifiedrequest['limit'] = $request['limit'];
         //manual query without raw query;
-        $result = Product::select('products.account_id','products.merchant_id','products.category','locations.latitude', 'locations.longitude', 'locations.route')
+        $result = Product::select('products.account_id','products.merchant_id','products.category','products.title', 'products.description','locations.latitude', 'locations.longitude', 'locations.route')
             ->leftJoin('locations', 'products.account_id',"=","locations.account_id")
             ->where("status","featured")
             ->limit($modifiedrequest['limit'])->get();
         for($i=0; $i<count($result); $i++){
-            $result[$i]["distance"] = $this->LongLatDistance("10.337182","123.893764","10.35280682","123.91337013");
+            $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$request[$i]["latitude"], $request[$i]["longitude"]);
             $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
             $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
         }
@@ -87,6 +87,15 @@ class ProductController extends APIController
         $dashboard["request_timestamp"]= date("Y-m-d h:i:s");
         $dashboard["data"] = $dashboardarr;
         return $dashboard;
+    }
+
+    public function getCategories(Request $request){
+        //limit and offset only
+        $this->model = new Product;
+        (isset($request['offset'])) ? $this->model->offset($request['offset']) : null;
+        (isset($request['limit'])) ? $this->model = $this->model->limit($request['limit']) : null;
+        $result = $this->model->select('category')->get();
+        return $result;
     }
 
     public function retrieveByShop(Request $request){
@@ -101,7 +110,7 @@ class ProductController extends APIController
                 ->where("merchants.code",$request['id'])
                 ->leftJoin('locations','merchants.account_id',"=", "locations.account_id")->get();
             for($i=0; $i<count($result); $i++){
-                $result[$i]["distance"] = $this->LongLatDistance("10.337182","123.893764","10.35280682","123.91337013");
+                $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$request[$i]["latitude"], $request[$i]["longitude"]);
                 $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
                 $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
             }
