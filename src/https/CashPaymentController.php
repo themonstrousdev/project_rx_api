@@ -28,17 +28,44 @@ class CashPaymentController extends APIController
         $data["status"] = "PENDING";
         $this->model = new CashPayment();
         $this->insertDB($data);
-        return $this->response();
+        $data["payment_payload"] = $data["payload"];
+        $data["payment_payload_value"] = $data["code"];
+        //TODO: Once payment added, add entry to ledger
+        $test = app('Increment\Finance\Http\LedgerController')->addEntry($data);
+        $test = $test->getData();
+        $idfrominsert = new Request();
+        $idfrominsert["id"] = $test->{"data"};
+        $code = app('Increment\Finance\Http\LedgerController')->retrieveByID($idfrominsert);
+        return $code;
+        //return $this->response();
     }
 
-    public function retrieveByCode(Request $request){
+    public function retrieve(Request $request){
         $entry = CashPayment::where('code', $request["code"])->get();
         return $entry;
     }
 
     public function updateStatus(Request $request){
+        //check if ID is authenticated to grab data
         $data = $request->all();
-        $entry = $this->retrieveByCode($request);
+        CashPayment::where('code', $request["code"])
+        ->update(['status' =>  $request["status"]]);
+        $entry = CashPayment::select()
+        ->where('code', $request["code"])->get();
+        //get updated values here then pass to ledger controller
         //TODO: Update DB once retrieved. Clarify if update value is from front-end.
+        $entry[0]["payment_payload"] = $entry[0]["payload"];
+        $entry[0]["payment_payload_value"] = $entry[0]["code"];
+        $entry[0]["checkout_id"] = $entry[0]["checkout_id"];
+        $entry[0]["account_id"] = $request["account_id"];
+        $entry[0]["account_code"] = $request["account_code"];
+        $entry[0]["code"] = $this->generateCode();
+        $entry[0]["currency"] = $request["currency"];
+        $test = app('Increment\Finance\Http\LedgerController')->addEntry($entry[0]);
+        $test = $test->getData();
+        $idfrominsert = new Request();
+        $idfrominsert["id"] = $test->{"data"};
+        $code = app('Increment\Finance\Http\LedgerController')->retrieveByID($idfrominsert);
+        return $code;
     }
 }
