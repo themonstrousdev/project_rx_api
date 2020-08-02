@@ -25,7 +25,7 @@ class ProductController extends APIController
     );
     
     public static function LongLatDistance(
-        $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
+        $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
       {
         $latitudeFrom = floatval($latitudeFrom);
         $longitudeFrom = floatval($longitudeFrom);
@@ -57,7 +57,7 @@ class ProductController extends APIController
                 ->where($condition['column'],$condition['value'])
                 ->limit($request['limit'])->get();
             for($i=0; $i<count($result); $i++){
-                $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$request[$i]["latitude"], $request[$i]["longitude"]);
+                $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$result[$i]["latitude"], $result[$i]["longitude"]);
                 $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
                 $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
             }
@@ -74,12 +74,12 @@ class ProductController extends APIController
         $modifiedrequest = new Request([]);
         $modifiedrequest['limit'] = $request['limit'];
         //manual query without raw query;
-        $result = Product::select('products.account_id','products.merchant_id','products.category','products.title', 'products.description','locations.latitude', 'locations.longitude', 'locations.route')
+        $result = Product::select('products.id', 'products.account_id','products.merchant_id','products.category','products.title', 'products.description','locations.latitude', 'locations.longitude', 'locations.route')
             ->leftJoin('locations', 'products.account_id',"=","locations.account_id")
             ->where("status","featured")
             ->limit($modifiedrequest['limit'])->get();
         for($i=0; $i<count($result); $i++){
-            $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$request[$i]["latitude"], $request[$i]["longitude"]);
+            $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$result[$i]["latitude"], $result[$i]["longitude"]);
             $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
             $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
         }
@@ -94,7 +94,7 @@ class ProductController extends APIController
         $this->model = new Product;
         (isset($request['offset'])) ? $this->model->offset($request['offset']) : null;
         (isset($request['limit'])) ? $this->model = $this->model->limit($request['limit']) : null;
-        $result = $this->model->select('category')->get();
+        $result = $this->model->select('category')->groupBy('category')->get();
         return $result;
     }
 
@@ -107,26 +107,24 @@ class ProductController extends APIController
             //grab by shop
             //$result = Merchant::with(['products'])->select('account_id','merchant_id','category')->distinct()->where("code",$request["id"])->limit($modifiedrequest['limit'])->get();
             $result = Merchant::select()
-                ->where("merchants.code",$request['id'])
+                ->where("merchants.id",$request['id'])
                 ->leftJoin('locations','merchants.account_id',"=", "locations.account_id")->get();
             for($i=0; $i<count($result); $i++){
-                $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$request[$i]["latitude"], $request[$i]["longitude"]);
+                $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$result[$i]["latitude"], $result[$i]["longitude"]);
                 $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
-                $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
             }
             array_push($dashboardarr, $result);
         }else{
             //"merchants.code","merchants.account_id","locations.latitude","locations.longitude","locations.route","locations.locality"
             //manual query without raw query;
-            $result = Merchant::select("merchants.code","merchants.account_id","locations.latitude","locations.longitude","locations.route","locations.locality")
+            $result = Merchant::select("merchants.id", "merchants.code","merchants.account_id", "merchants.name", "merchants.prefix", "merchants.logo", "locations.latitude","locations.longitude","locations.route","locations.locality")
                 ->leftJoin('locations', 'merchants.account_id',"=","locations.account_id")
                 ->limit($request['limit'])
                 ->offset($request['offset'])
                 ->orderBy($request['sort'], 'desc')->get();
             for($i=0; $i<count($result); $i++){
-                $result[$i]["distance"] = $this->LongLatDistance("10.337182","123.893764","10.35280682","123.91337013");
+                $result[$i]["distance"] = $this->LongLatDistance($request["latitude"],$request["longitude"],$result[$i]["latitude"], $result[$i]["longitude"]);
                 $result[$i]["rating"] = app('Increment\Common\Rating\Http\RatingController')->getRatingByPayload("merchant", $result[$i]["account_id"]);
-                $result[$i]["image"] = app('Increment\Imarket\Product\Http\ProductImageController')->getProductImage($result[$i]["id"], "featured");
             }
             //$result = Product::select('account_id','merchant_id','category')->where($condition['column'],$condition['value'])->limit($request['limit'])->offset($request['offset'])->orderBy($request['sort'], 'desc')->get();
             //$result[0]["location"] = Location::select('latitude', 'longitude', 'route')->where("account_id", $result[0]["account_id"])->get();
