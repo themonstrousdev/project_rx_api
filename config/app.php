@@ -173,8 +173,6 @@ return [
         Increment\Common\Invitation\InvitationServiceProvider::class,
         Increment\Common\System\SystemNotificationServiceProvider::class,
         Increment\Common\Image\ImageServiceProvider::class,
-
-
         Increment\Imarket\Bundled\BundledServiceProvider::class,
         //Ratings Provider
         Increment\Common\Rating\RatingServiceProvider::class,
@@ -234,6 +232,7 @@ return [
         'Mail' => Illuminate\Support\Facades\Mail::class,
         'Notification' => Illuminate\Support\Facades\Notification::class,
         'Password' => Illuminate\Support\Facades\Password::class,
+        'PaymentIntent' => Stripe\PaymentIntent::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,

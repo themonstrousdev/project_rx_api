@@ -110,6 +110,7 @@ $controller = 'ProductController@';
 Route::post($route.'category', $controller."retrieveByCategory");
 Route::post($route.'featured', $controller."retrieveByFeatured");
 Route::post($route.'shops', $controller."retrieveByShop");
+Route::post($route.'categories', $controller."getCategories");
 // //Status Change for Package
 // $route = env('PACKAGE_ROUTE', '').'/checkouts/';
 // $controller = 'CheckoutController@';
