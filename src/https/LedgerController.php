@@ -28,7 +28,6 @@ class LedgerController extends APIController
       }
     }
 
-<<<<<<< HEAD
     public function addEntry($data){
       $amount = Checkout::select("total")->where("id", $data["checkout_id"])->get();
       $entry = array();
@@ -73,18 +72,6 @@ class LedgerController extends APIController
     public function retrieveByID(Request $request){
       //retrieves ledger entry by ID and passes ledger and merchant info
         $result = Ledger::select("ledgers.id AS ledger", "ledgers.code AS ledgerc", "ledgers.created_at AS ledger_created", "ledgers.updated_at AS ledger_updated", "ledgers.*", "merchants.*")
-=======
-    public function retrieveByCode(Request $request){
-      $result = Ledger::select()
-        ->where("ledgers.code",$request["code"])
-        ->leftJoin('merchants', 'ledgers.account_id', "=", "merchants.account_id")
-        ->get();
-      return $result;      
-    }
-
-    public function retrieveByID(Request $request){
-        $result = Ledger::select()
->>>>>>> 8abffd811a5867e3374cfcad7bd0c35bab4bf52d
         ->where("ledgers.id",$request["id"])
         ->leftJoin('merchants', 'ledgers.account_id', "=", "merchants.account_id")
         ->get();
