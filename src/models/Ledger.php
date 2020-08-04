@@ -7,7 +7,12 @@ use App\APIModel;
 
 class Ledger extends APIModel
 {
-    //
-    protected $table = "ledgers";
-    protected $fillable = ["code", "account_id", "amount", "description", "currency"];
+    protected $table = 'ledgers';
+    protected $fillable = ['account_id', 'payload', 'payload_value', 'status', 'url'];
+
+    public function getAccountIdAttribute($value){
+      return intval($value);
+    }
+
 }
+
