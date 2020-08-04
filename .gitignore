@@ -4,6 +4,7 @@
 /storage/*.key
 /vendor
 /packages
+/packages/increment/finance
 /.idea
 /.vagrant
 Homestead.json
