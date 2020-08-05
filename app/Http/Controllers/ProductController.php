@@ -94,7 +94,7 @@ class ProductController extends APIController
         $this->model = new Product;
         (isset($request['offset'])) ? $this->model->offset($request['offset']) : null;
         (isset($request['limit'])) ? $this->model = $this->model->limit($request['limit']) : null;
-        $result = $this->model->select('category')->groupBy('category')->get();
+        $result = $this->model->select('category')->where('category', '!=', null)->groupBy('category')->get();
         return $result;
     }
 
