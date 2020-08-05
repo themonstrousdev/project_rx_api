@@ -3,6 +3,7 @@
 /public/storage
 /storage/*.key
 /vendor
+.vscode/
 /packages
 /packages/increment/finance
 /.idea
