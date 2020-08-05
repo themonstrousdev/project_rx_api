@@ -56,6 +56,7 @@
             "Increment\\Imarket\\Installment\\": "packages/increment/imarket/installment/src/",
             "Increment\\Imarket\\Rental\\": "packages/increment/imarket/rental/src/",
             "Increment\\Imarket\\Delivery\\": "packages/increment/imarket/delivery/src/",
+            "Increment\\Imarket\\Location\\": "packages/increment/imarket/location/src/",
             "Increment\\Finance\\": "packages/increment/finance/src/"
         }
     },
