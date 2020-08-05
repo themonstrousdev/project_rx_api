@@ -27,6 +27,9 @@ class ProductController extends APIController
     public static function LongLatDistance(
         $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
       {
+        if (is_null($latitudeFrom) || is_null($longitudeFrom) || is_null($latitudeTo) || is_null($longitudeTo)) {
+          return null;
+        }
         $latitudeFrom = floatval($latitudeFrom);
         $longitudeFrom = floatval($longitudeFrom);
         $latitudeTo = floatval($latitudeTo);
