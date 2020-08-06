@@ -181,6 +181,7 @@ return [
         // Increment\Imarket\Coupon\CouponServiceProvider::class,
         Increment\Imarket\Cart\CartServiceProvider::class,
         Increment\Imarket\Merchant\MerchantServiceProvider::class,
+        Increment\Imarket\Location\LocationServiceProvider::class,
         Increment\Imarket\Product\ProductServiceProvider::class,
         Increment\Imarket\Shipping\ShippingServiceProvider::class,
         Increment\Imarket\Installment\InstallmentServiceProvider::class,

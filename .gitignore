@@ -2,8 +2,11 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/
 /vendor
+.vscode/
 /packages
+/packages/increment/finance
 /.idea
 /.vagrant
 Homestead.json
