@@ -27,6 +27,9 @@ class ProductController extends APIController
     public static function LongLatDistance(
         $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
       {
+        if (is_null($latitudeFrom) || is_null($longitudeFrom) || is_null($latitudeTo) || is_null($longitudeTo)) {
+          return null;
+        }
         $latitudeFrom = floatval($latitudeFrom);
         $longitudeFrom = floatval($longitudeFrom);
         $latitudeTo = floatval($latitudeTo);
@@ -94,7 +97,7 @@ class ProductController extends APIController
         $this->model = new Product;
         (isset($request['offset'])) ? $this->model->offset($request['offset']) : null;
         (isset($request['limit'])) ? $this->model = $this->model->limit($request['limit']) : null;
-        $result = $this->model->select('category')->groupBy('category')->get();
+        $result = $this->model->select('category')->where('category', '!=', null)->groupBy('category')->get();
         return $result;
     }
 
