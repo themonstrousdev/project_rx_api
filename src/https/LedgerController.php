@@ -59,9 +59,10 @@ class LedgerController extends APIController
     }
 
     public function retrieveForMerchant(Request $request){
-      $data = $request->all();
-      $result = Ledger::select()
-      ->where("ledgers.account_code", $data["code"])
+      $result = Ledger::select("ledgers.id AS ledger", "ledgers.code AS ledgerc", "ledgers.created_at AS ledger_created", "ledgers.updated_at AS ledger_updated", "ledgers.deleted_at AS ledger_delete",
+       "ledgers.*", "merchants.*", "cash_methods.created_at AS cash_methods_created", "cash_methods.updated_at AS cash_methods_updated", "cash_methods.deleted_at AS cash_methods_deleted")
+      ->where("ledgers.account_code", $request["code"])
+      ->leftJoin('merchants', 'ledgers.account_id', "=", "merchants.account_id")
       ->leftJoin("cash_methods", "ledgers.payment_payload_value", "=", "cash_methods.code")
       ->limit($request['limit'])
       ->offset($request['offset'])

@@ -19,8 +19,10 @@ $controller = 'Increment\Finance\Http\CashPaymentController@';
 Route::post($route.'create', $controller."addPayment");
 Route::post($route.'update', $controller."updateStatus");
 
+
 $route = env('PACKAGE_ROUTE', '').'/credit_payments/';
 $controller = 'Increment\Finance\Http\CCDCController@';
 Route::post($route.'create', $controller."createIntent");
 Route::post($route.'retrieve', $controller."retrieveIntent");
 Route::post($route.'create_payment', $controller."createEntry");
+Route::post($route.'payment_methods', $controller."retrievePaymentMethods");
