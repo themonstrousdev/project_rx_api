@@ -144,29 +144,6 @@ class APIController extends Controller
     //   }
     // }
     // the token is valid and we have found the user via the sub claim
-    try {
-      $user = JWTAuth::parseToken()->authenticate();
-      return true;
-    } catch (TokenExpiredException $e) {
-      $this->response['error'] = array(
-        'message' => 'Invalid Credentials',
-        'status'  => $e->getStatusCode()
-      );
-      return false;
-    } catch (TokenInvalidException $e) {
-      $this->response['error'] = array(
-        'message' => 'Invalid Credentials',
-        'status'  => $e->getStatusCode()
-      );
-      return false;
-
-    } catch (JWTException $e) {
-      $this->response['error'] = array(
-        'message' => 'Invalid Credentials',
-        'status'  => $e->getStatusCode()
-      );
-      return false;
-    }
     return true;
   }
 
