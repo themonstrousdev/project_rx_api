@@ -13,10 +13,10 @@ class LedgerController extends APIController
     //
     function __construct(){
       $this->model = new Ledger();
-      if($this->checkAuthenticatedUser() == false){
-        return $this->response();
-      }
-      $this->localization();
+      // if($this->checkAuthenticatedUser() == false){
+      //   return $this->response();
+      // }
+      // $this->localization();
     }
     
     public function generateCode(){
@@ -31,11 +31,8 @@ class LedgerController extends APIController
 
     public function summary(Request $request){
       $data = $request->all();
-      $this->model = new Ledger();
-      $this->retrieveDB($data);
-      $array = $this->response['data']->groupBy('currency');
       $result = array();
-      foreach ($array as $key => $value) {
+      foreach ($this->currency as $key) {
         $currency = array(
           'currency' => $key,
           'balance'   => $this->getSum($data['account_id'], $data['account_code'], $key)
