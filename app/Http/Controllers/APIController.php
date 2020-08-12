@@ -29,7 +29,7 @@ class APIController extends Controller
     Website: www.payhiram.ph
   */
   protected $model = NULL;
-  protected $currency = array('PHP', 'US');
+  protected $currency = array('PHP', 'USD');
   protected $foreignTable = [];
   protected $editableForeignTable = array();
   protected $requiredForeignTable = array();
