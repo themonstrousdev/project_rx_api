@@ -13,10 +13,10 @@ class LedgerController extends APIController
     //
     function __construct(){
       $this->model = new Ledger();
-      // if($this->checkAuthenticatedUser() == false){
-      //   return $this->response();
-      // }
-      // $this->localization();
+      if($this->checkAuthenticatedUser() == false){
+        return $this->response();
+      }
+      $this->localization();
     }
     
     public function generateCode(){
