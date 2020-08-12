@@ -44,7 +44,7 @@ class LedgerController extends APIController
     }
 
     public function getSum($accountId, $accountCode, $currency){
-      $total = Ledger::where('account_id', '=', $accountId)->where('account_code', '=', $accountCode)->where('currency', '=', $currency)->sum();
+      $total = Ledger::where('account_id', '=', $accountId)->where('account_code', '=', $accountCode)->where('currency', '=', $currency)->sum('amount');
       return $total;
     }
 
