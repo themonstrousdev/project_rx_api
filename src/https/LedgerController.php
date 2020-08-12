@@ -12,11 +12,12 @@ class LedgerController extends APIController
 {
     //
     function __construct(){
-        $this->model = new Ledger();
-        // $this->notRequired = array(
-        //     'name', 'address', 'prefix', 'logo', 'website', 'email'
-        // );
+      $this->model = new Ledger();
+      if($this->checkAuthenticatedUser() == false){
+        return $this->response();
       }
+      $this->localization();
+    }
     
     public function generateCode(){
       $code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 32);
@@ -26,6 +27,28 @@ class LedgerController extends APIController
       }else{
         return $code;
       }
+    }
+
+    public function summary(Request $request){
+      $data = $request->all();
+      $this->model = new Ledger();
+      $this->retrieveDB($data);
+      $array = $this->response['data']->groupBy('currency');
+      $result = array();
+      foreach ($array as $key => $value) {
+        $currency = array(
+          'currency' => $key,
+          'balance'   => $this->getSum($data['account_id'], $data['account_code'], $key)
+        );
+        $result[] = $currency;
+      }
+      $this->response['data'] = $result;
+      return $this->response();
+    }
+
+    public function getSum($accountId, $accountCode, $currency){
+      $total = Ledger::where('account_id', '=', $accountId)->where('account_code', '=', $accountCode)->where('currency', '=', $currency)->sum();
+      return $total;
     }
 
     public function addEntry($data){
