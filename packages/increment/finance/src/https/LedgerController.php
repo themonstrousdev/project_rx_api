@@ -12,11 +12,12 @@ class LedgerController extends APIController
 {
     //
     function __construct(){
-        $this->model = new Ledger();
-        // $this->notRequired = array(
-        //     'name', 'address', 'prefix', 'logo', 'website', 'email'
-        // );
+      $this->model = new Ledger();
+      if($this->checkAuthenticatedUser() == false){
+        return $this->response();
       }
+      $this->localization();
+    }
     
     public function generateCode(){
       $code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 32);
@@ -26,6 +27,25 @@ class LedgerController extends APIController
       }else{
         return $code;
       }
+    }
+
+    public function summary(Request $request){
+      $data = $request->all();
+      $result = array();
+      foreach ($this->currency as $key) {
+        $currency = array(
+          'currency' => $key,
+          'balance'   => $this->getSum($data['account_id'], $data['account_code'], $key)
+        );
+        $result[] = $currency;
+      }
+      $this->response['data'] = $result;
+      return $this->response();
+    }
+
+    public function getSum($accountId, $accountCode, $currency){
+      $total = Ledger::where('account_id', '=', $accountId)->where('account_code', '=', $accountCode)->where('currency', '=', $currency)->sum('amount');
+      return $total;
     }
 
     public function addEntry($data){
@@ -59,9 +79,10 @@ class LedgerController extends APIController
     }
 
     public function retrieveForMerchant(Request $request){
-      $data = $request->all();
-      $result = Ledger::select()
-      ->where("ledgers.account_code", $data["code"])
+      $result = Ledger::select("ledgers.id AS ledger", "ledgers.code AS ledgerc", "ledgers.created_at AS ledger_created", "ledgers.updated_at AS ledger_updated", "ledgers.deleted_at AS ledger_delete",
+       "ledgers.*", "merchants.*", "cash_methods.created_at AS cash_methods_created", "cash_methods.updated_at AS cash_methods_updated", "cash_methods.deleted_at AS cash_methods_deleted")
+      ->where("ledgers.account_code", $request["code"])
+      ->leftJoin('merchants', 'ledgers.account_id', "=", "merchants.account_id")
       ->leftJoin("cash_methods", "ledgers.payment_payload_value", "=", "cash_methods.code")
       ->limit($request['limit'])
       ->offset($request['offset'])
