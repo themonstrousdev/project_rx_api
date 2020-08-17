@@ -25,7 +25,7 @@ class WithdrawalController extends APIController
   public function create(Request $request){
     $data = $request->all();
     $amount = floatval($data['amount']) + floatval($data['charge']);
-    $myBalance = floatval(app($this->ledgerClass)->retrievePersonal($data['account_id'], $data['account_code'], $data['currency'));
+    $myBalance = floatval(app($this->ledgerClass)->retrievePersonal($data['account_id'], $data['account_code'], $data['currency']));
     if($myBalance < $amount){
       $this->response['error'] = 'You have insufficient balance. Your current balance is '.$data['currency'].' '.$myBalance.' balance.';
     }else if($data['stage'] == 1){
