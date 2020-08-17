@@ -31,7 +31,7 @@ Route::post($route.'create_payment', $controller."createEntry");
 Route::post($route.'payment_methods', $controller."retrievePaymentMethods");
 
 
-// Ledger Controller
+// Withdrawals Controller
 $route = env('PACKAGE_ROUTE', '').'/withdrawals/';
 $controller = 'Increment\Finance\Http\WithdrawalController@';
 Route::post($route.'create', $controller."create");
