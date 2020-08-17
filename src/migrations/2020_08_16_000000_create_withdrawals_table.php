@@ -18,7 +18,7 @@ class CreateWithdrawalsTable extends Migration
             $table->string('code');
             $table->bigInteger('account_id');
             $table->string('account_code');
-            $table->string('curreny');
+            $table->string('currency');
             $table->double('amount', 8, 2);
             $table->string('payment_payload');
             $table->string('payment_payload_value');
