@@ -13,9 +13,6 @@ class LedgerController extends APIController
     //
     function __construct(){
         $this->model = new Ledger();
-        // $this->notRequired = array(
-        //     'name', 'address', 'prefix', 'logo', 'website', 'email'
-        // );
       }
     
     public function generateCode(){
