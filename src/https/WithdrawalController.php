@@ -32,7 +32,7 @@ class WithdrawalController extends APIController
       app($this->notificationSettingClass)->generateOtpById($data['account_id']);
       $this->response['data'] = true;
     }else if($data['stage'] == 2){
-      $this->model = new Withdraw();
+      $this->model = new Withdrawal();
       $data['status'] = 'pending';
       $data['code'] = $this->generateCode();
       $this->insertDB($data);
