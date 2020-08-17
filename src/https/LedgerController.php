@@ -98,4 +98,10 @@ class LedgerController extends APIController
         ->get();
       return $result; 
     }
+
+    public function retrievePersonal($accountId, $accountCode, $currency){
+      $ledger = Ledger::where('account_id', '=', $accountId)->where('account_code', '=', $accountCode)->where('currency', '=', $currency)->sum('amount');
+      $total = doubleval($ledger);
+      return doubleval($total);
+    }
 }
