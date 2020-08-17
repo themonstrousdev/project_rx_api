@@ -20,8 +20,8 @@ class LedgerController extends APIController
     }
     
     public function generateCode(){
-      $code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 32);
-      $codeExist = Ledger::where('id', '=', $code)->get();
+      $code = 'led_'.substr(str_shuffle($this->codeSource), 0, 60);
+      $codeExist = Ledger::where('code', '=', $code)->get();
       if(sizeof($codeExist) > 0){
         $this->generateCode();
       }else{

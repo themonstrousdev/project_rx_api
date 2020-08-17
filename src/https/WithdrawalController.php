@@ -43,4 +43,13 @@ class WithdrawalController extends APIController
     return $this->response();
   }
 
+  public function generateCode(){
+    $code = 'wid_'.substr(str_shuffle($this->codeSource), 0, 60);
+    $codeExist = Withdrawal::where('code', '=', $code)->get();
+    if(sizeof($codeExist) > 0){
+      $this->generateCode();
+    }else{
+      return $code;
+    }
+  }
 }
