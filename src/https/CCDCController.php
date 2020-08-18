@@ -3,7 +3,7 @@
 namespace Increment\Finance\Http;
 
 use Illuminate\Http\Request;
-use Stripe\PaymentIntent;
+use Luigel\Paymongo\Facades\Paymongo;
 use App\Http\Controllers\APIController;
 use Increment\Finance\Models\Ledger;
 use Increment\Common\Image\Models\Image;
@@ -19,66 +19,56 @@ class CCDCController extends APIController
         // $this->notRequired = array(
         //     'name', 'address', 'prefix', 'logo', 'website', 'email'
         // );
-      }
-    
-
-    public function retrievePaymentMethods(Request $request){
-      $client = new \Adyen\Client();
-      $client->setXApiKey("AQEjhmfuXNWTK0Qc+iSFoUcchM2oZbT2WRT8TN64AFhnWv8f4XEQwV1bDb7kfNy1WIxIIkxgBw==-jPVsG+S8dpnh4rHFop6N+P9WVptl2njWPRrsgBSg6VE=-BZw.I3]dnUY(VZa3");
-      $client->setEnvironment(\Adyen\Environment::TEST);
-      $service = new \Adyen\Service\Checkout($client);
-      $params = array(
-        "merchant_account" => "Company.USCDCISM",
-        "country_code" => "PH",
-        "amount" => array(
-          "currency" => "PHP",
-          "value" => 50000
-        ),
-        "channel" => "Web"
-      );
-      $result = $service->paymentMethods($params);
-      return $result;
     }
-    //   //integration using Stripe
-    //   //tell frontend
-    // public function createIntent(Request $request){
-    //     \Stripe\Stripe::setApiKey('sk_test_51HA4X8JX9GMwJlz6Jx8onRvYYEeP5cxgZDkJHbeglmgnZFNjkSjYB3mh0Ac0f95g9r2pcqY7cMJSm0Oz0AvyZyS700aBw2qyDN');
-    //     $paymentIntent = PaymentIntent::create([
-    //         'amount' => 50000,
-    //         'currency' => $request["currency"]
-    //     ]);
-    //     return $paymentIntent->id;
-    // }
-    // public function retrieveIntent(Request $request){
-    //     \Stripe\Stripe::setApiKey('sk_test_51HA4X8JX9GMwJlz6Jx8onRvYYEeP5cxgZDkJHbeglmgnZFNjkSjYB3mh0Ac0f95g9r2pcqY7cMJSm0Oz0AvyZyS700aBw2qyDN');
-    //     $paymentIntent = PaymentIntent::retrieve([
-    //         'id' => $request["code"]
-    //     ]);
-    //     return $paymentIntent;
-    // }
 
-    // public function generateCode(){
-    //     $code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 32);
-    //     $codeExist = Ledger::where('id', '=', $code)->get();
-    //     if(sizeof($codeExist) > 0){
-    //       $this->generateCode();
-    //     }else{
-    //       return $code;
-    //     }
-    //   }
+    public function createPaymentMethod($details){
+        $paymentMethod = Paymongo::paymentMethod()->create([
+            'type' => 'card',
+            'details' => [
+                'card_number' => $details['card_number'],
+                'exp_month' => $details['exp_month'],
+                'exp_year' => $details['exp_year'],
+                'cvc' => $details['cvc'],
+            ],
+            'billing' => [
+                'address' => [
+                    'line1' => $details['line1'],
+                    'city' => $details['city'],
+                    'state' => $details['state'],
+                    'country' => $details['country'],
+                    'postal_code' => $details['postal_code'],
+                ],
+                'name' => $details['name'],
+                'email' => $details['email'],
+                'phone' => $details['phone']
+            ],
+        ]);
+        return ($paymentMethod->getData());
+    }
+ 
+    public function createPaymentIntent($details){
+        $paymentIntent = Paymongo::paymentIntent()->create([
+            'amount' => $details['amount'],
+            'payment_method_allowed' => [
+                'card'
+            ],
+            'payment_method_options' => [
+                'card' => [
+                    'request_three_d_secure' => 'automatic'
+                ]
+            ],
+            'description' => $details['description'],
+            'statement_descriptor' => $details['descriptor'],
+            'currency' => $details['currency'],
+        ]);
+        return ($paymentIntent->getData());
+    }
 
-    // public function createEntry(Request $request){
-    //     $data = $request->all();
-    //     $this->model = new CardPayment();
-    //     $this->insertDB($data);
-    //     $data["payment_payload"] = $data["payload"];
-    //     $data["payment_payload_value"] = $data["code"];
-    //     //TODO: Once payment added, add entry to ledger
-    //     $test = app('Increment\Finance\Http\LedgerController')->addEntry($data);
-    //     $test = $test->getData();
-    //     $idfrominsert = new Request();
-    //     $idfrominsert["id"] = $test->{"data"};
-    //     $code = app('Increment\Finance\Http\LedgerController')->retrieveByID($idfrominsert);
-    //     return $code;
-    // }
+    public function payByCreditCard(Request $request){
+        $details = $request->all();
+        $payables = $this->createPaymentIntent($details);
+        $mop = $this->createPaymentMethod($payment);
+        $paymentIntentId = $payables['id'];
+        $paymentMethodId = $mop['id'];
+    }
 }
