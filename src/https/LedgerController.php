@@ -12,20 +12,40 @@ class LedgerController extends APIController
 {
     //
     function __construct(){
-        $this->model = new Ledger();
-        // $this->notRequired = array(
-        //     'name', 'address', 'prefix', 'logo', 'website', 'email'
-        // );
+      $this->model = new Ledger();
+      if($this->checkAuthenticatedUser() == false){
+        return $this->response();
       }
+      $this->localization();
+    }
     
     public function generateCode(){
-      $code = substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 32);
-      $codeExist = Ledger::where('id', '=', $code)->get();
+      $code = 'led_'.substr(str_shuffle($this->codeSource), 0, 60);
+      $codeExist = Ledger::where('code', '=', $code)->get();
       if(sizeof($codeExist) > 0){
         $this->generateCode();
       }else{
         return $code;
       }
+    }
+
+    public function summary(Request $request){
+      $data = $request->all();
+      $result = array();
+      foreach ($this->currency as $key) {
+        $currency = array(
+          'currency' => $key,
+          'balance'   => $this->getSum($data['account_id'], $data['account_code'], $key)
+        );
+        $result[] = $currency;
+      }
+      $this->response['data'] = $result;
+      return $this->response();
+    }
+
+    public function getSum($accountId, $accountCode, $currency){
+      $total = Ledger::where('account_id', '=', $accountId)->where('account_code', '=', $accountCode)->where('currency', '=', $currency)->sum('amount');
+      return $total;
     }
 
     public function addEntry($data){
@@ -77,5 +97,11 @@ class LedgerController extends APIController
         ->leftJoin('merchants', 'ledgers.account_id', "=", "merchants.account_id")
         ->get();
       return $result; 
+    }
+
+    public function retrievePersonal($accountId, $accountCode, $currency){
+      $ledger = Ledger::where('account_id', '=', $accountId)->where('account_code', '=', $accountCode)->where('currency', '=', $currency)->sum('amount');
+      $total = doubleval($ledger);
+      return doubleval($total);
     }
 }
